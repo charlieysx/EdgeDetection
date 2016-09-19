@@ -2,6 +2,8 @@ package com.elims.edgedetection;
 
 import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -16,7 +18,7 @@ import com.elims.edgedetection.detection.Sobel;
 import com.elims.edgedetection.utils.BitmapUtil;
 import com.elims.edgedetection.utils.CommonUtil;
 
-public class MainActivity extends AppCompatActivity implements View.OnClickListener {
+public class MainActivity extends AppCompatActivity implements View.OnClickListener, IMain {
 
     private ImageView iv_result;
     private Button bt_last;
@@ -31,6 +33,8 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     private int[] imgIds = {R.mipmap.test, R.mipmap.test2, R.mipmap.test3};
     private int thisImg;
+    private boolean dealing;
+    private boolean isd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,14 +62,14 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_next.setOnClickListener(this);
         bt_change.setOnClickListener(this);
 
-        detection = new Sobel();
+        detection = new Sobel(this);
 
         imgMaxWidth = CommonUtil.screenWidth;
         thisImg = 0;
-        bitmap = BitmapUtil.getThumbnailBitmap(this, imgIds[thisImg], imgMaxWidth);
-        detection.detection(bitmap);
 
-        showBitmap(bitmap);
+        dealing = false;
+        isd = false;
+        deal(0, 0, 0);
     }
 
     private void showBitmap(Bitmap bitmap){
@@ -82,43 +86,94 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     public void onClick(View view) {
         switch(view.getId()){
             case R.id.bt_last:
-                thisImg--;
-                if(thisImg < 0){
-                    thisImg = 0;
-                    Toast.makeText(this, "已经是第一张了", Toast.LENGTH_SHORT).show();
+                if(dealing) {
+                    Toast.makeText(this, "图象处理中...", Toast.LENGTH_SHORT).show();
                 } else {
-                    bitmap = BitmapUtil.getThumbnailBitmap(this, imgIds[thisImg], imgMaxWidth);
-                    detection.detection(bitmap);
-                    showBitmap(bitmap);
-                    et_threshold.setText("0");
-                    et_gray_threshold.setText("0");
-                    et_pale_grey_threshold.setText("0");
+                    thisImg--;
+                    if (thisImg < 0) {
+                        thisImg = 0;
+                        Toast.makeText(this, "已经是第一张了", Toast.LENGTH_SHORT).show();
+                    } else {
+                        isd = false;
+                        deal(0, 0, 0);
+                        et_threshold.setText("0");
+                        et_gray_threshold.setText("0");
+                        et_pale_grey_threshold.setText("0");
+                    }
                 }
                 break;
             case R.id.bt_next:
-                thisImg++;
-                if(thisImg > 2){
-                    thisImg = 2;
-                    Toast.makeText(this, "已经是最后一张了", Toast.LENGTH_SHORT).show();
+                if(dealing) {
+                    Toast.makeText(this, "图象处理中...", Toast.LENGTH_SHORT).show();
                 } else {
-                    bitmap = BitmapUtil.getThumbnailBitmap(this, imgIds[thisImg], imgMaxWidth);
-                    detection.detection(bitmap);
-                    showBitmap(bitmap);
-                    et_threshold.setText("0");
-                    et_gray_threshold.setText("0");
-                    et_pale_grey_threshold.setText("0");
+                    thisImg++;
+                    if (thisImg > 2) {
+                        thisImg = 2;
+                        Toast.makeText(this, "已经是最后一张了", Toast.LENGTH_SHORT).show();
+                    } else {
+                        isd = false;
+                        deal(0, 0, 0);
+                        et_threshold.setText("0");
+                        et_gray_threshold.setText("0");
+                        et_pale_grey_threshold.setText("0");
+                    }
                 }
                 break;
             case R.id.bt_change:
-                detection.detection(bitmap);
-                double a = Double.parseDouble(et_threshold.getText().toString());
-                double b = Double.parseDouble(et_threshold.getText().toString());
-                double c = Double.parseDouble(et_threshold.getText().toString());
-                Bitmap bm = ((Sobel) detection).getBitmap(a, b, c);
-                showBitmap(bm);
+                if(dealing) {
+                    Toast.makeText(this, "图象处理中...", Toast.LENGTH_SHORT).show();
+                } else {
+                    dealing = true;
+                    String sa = et_threshold.getText().toString();
+                    sa = sa.equals("") ? "0" : sa;
+                    String sb = et_gray_threshold.getText().toString();
+                    sb = sb.equals("") ? "0" : sb;
+                    String sc = et_pale_grey_threshold.getText().toString();
+                    sc = sc.equals("") ? "0" : sc;
+
+                    double a = Double.parseDouble(sa);
+                    double b = Double.parseDouble(sb);
+                    double c = Double.parseDouble(sc);
+//                    Toast.makeText(this, a + "\n" + b + "\n" + c, Toast.LENGTH_SHORT).show();
+                    isd = true;
+                    deal(a, b, c);
+                }
                 break;
             default:
                 break;
         }
     }
+
+    private void deal(final double a, final double b, final double c){
+        new Thread(){
+            @Override
+            public void run() {
+                bitmap = BitmapUtil.getThumbnailBitmap(MainActivity.this, imgIds[thisImg], imgMaxWidth);
+                if(isd) {
+                    detection.detection(bitmap);
+                    ((Sobel) detection).getBitmap(a, b, c);
+//                    Log.d("main", a + "--" + b + "--" + c);
+                } else {
+                    setBitmap(bitmap);
+                }
+            }
+        }.start();
+    }
+
+    @Override
+    public void setBitmap(Bitmap bitmap) {
+        Message msg = new Message();
+        msg.obj = bitmap;
+        mHandler.sendMessage(msg);
+    }
+
+    private Handler mHandler = new Handler(){
+        @Override
+        public void handleMessage(Message msg) {
+            Bitmap bitmap = (Bitmap) msg.obj;
+            showBitmap(bitmap);
+            dealing = false;
+        }
+    };
+
 }

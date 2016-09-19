@@ -3,6 +3,7 @@ package com.elims.edgedetection.detection;
 import android.graphics.Bitmap;
 import android.graphics.Color;
 
+import com.elims.edgedetection.IMain;
 import com.elims.edgedetection.utils.BitmapUtil;
 
 /**
@@ -17,7 +18,8 @@ public class Sobel extends Detection {
     private int[] mmap;
     private double[] tmap;
 
-    public Sobel() {
+    public Sobel(IMain iMain) {
+        super(iMain);
         this.originalBitmap = null;
     }
 
@@ -57,34 +59,63 @@ public class Sobel extends Detection {
      * @param a
      * @param b
      * @param c
-     * @return
+     *
      */
-    public Bitmap getBitmap(double a, double b, double c){
+    public void getBitmap(double a, double b, double c){
 
         if(a == 0 && b == 0 && c == 0){
-            return temp;
+            iMain.setBitmap(temp);
+            return ;
         }
 
         int w = temp.getWidth();
         int h = temp.getHeight();
         int[] cmap = new int[w * h];
 
+
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 if (tmap[j * w + i] > max * a) {
                     cmap[j * w + i] = mmap[j * w + i];
                 } else if (tmap[j * w + i] > max * b) {
-                    cmap[j * w + i] = mmap[j * w + i] - Color.GRAY;
+                    cmap[j * w + i] = getColor(mmap[j * w + i], 50);
                 } else if (tmap[j * w + i] > max * c) {
-                    cmap[j * w + i] = mmap[j * w + i] - Color.GRAY * 3 / 2;
+                    cmap[j * w + i] = getColor(mmap[j * w + i], 80);
                 } else {
                     cmap[j * w + i] = Color.WHITE;
                 }
             }
         }
 
-        return Bitmap.createBitmap(cmap, temp.getWidth(), temp.getHeight(),
+        Bitmap bm =  Bitmap.createBitmap(cmap, temp.getWidth(), temp.getHeight(),
                 Bitmap.Config.ARGB_8888);
+
+        iMain.setBitmap(bm);
+    }
+
+    private int getColor(int color, int value) {
+
+        int cr, cg, cb;
+
+        cr = (color & 0x00ff0000) >> 16;
+        cg = (color & 0x0000ff00) >> 8;
+        cb = color & 0x000000ff;
+
+        cr += value;
+        cg += value;
+        cb += value;
+
+        if(cr > 255){
+            cr = 255;
+        }
+        if(cg > 255){
+            cg = 255;
+        }
+        if(cb > 255){
+            cb = 255;
+        }
+
+        return Color.argb(255, cr, cg, cb);
     }
 
     /**

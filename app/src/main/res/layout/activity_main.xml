@@ -10,7 +10,7 @@
         android:id="@+id/iv_result"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:src="@mipmap/test2"/>
+        android:src="@mipmap/ic_launcher"/>
     <Button
         android:id="@+id/bt_last"
         android:layout_width="match_parent"
