@@ -1,8 +1,8 @@
 package com.elims.edgedetection;
 
 import android.graphics.Bitmap;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.widget.ImageView;
@@ -37,13 +37,15 @@ public class MainActivity extends AppCompatActivity {
         detection = new Sobel();
 
         int imgMaxWidth = CommonUtil.screenWidth;
-        bitmap = BitmapUtil.getThumbnailBitmap(this, R.mipmap.test, imgMaxWidth);
+        bitmap = BitmapUtil.getThumbnailBitmap(this, R.mipmap.test2, imgMaxWidth);
 
-        if(bitmap != null) {
-            iv_result.setImageBitmap(bitmap);
+        Bitmap bm = detection.detection(bitmap);
+
+        if(bm != null) {
+            iv_result.setImageBitmap(bm);
+            Log.i("MainActivity", "bitmap load end");
         } else {
             Log.i("MainActivity", "bitmap null");
         }
     }
-
 }

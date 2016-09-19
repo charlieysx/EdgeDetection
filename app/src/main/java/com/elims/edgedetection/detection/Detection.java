@@ -10,8 +10,8 @@ public abstract class Detection {
 
     /**
      * 进行边缘检测
-     * @param OriginalBitmap 原始图片
+     * @param originalBitmap 原始图片
      * @return
      */
-    public abstract Bitmap detection(Bitmap OriginalBitmap);
+    public abstract Bitmap detection(Bitmap originalBitmap);
 }
