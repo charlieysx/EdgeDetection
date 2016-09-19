@@ -12,28 +12,31 @@ import com.elims.edgedetection.utils.BitmapUtil;
 public class Sobel extends Detection {
 
     private Bitmap originalBitmap;
+    private Bitmap temp;
+    private double max;
+    private int[] mmap;
+    private double[] tmap;
 
     public Sobel() {
         this.originalBitmap = null;
     }
 
     @Override
-    public Bitmap detection(Bitmap originalBitmap) {
+    public void detection(Bitmap originalBitmap) {
 
         this.originalBitmap = originalBitmap;
 
-        Bitmap temp = BitmapUtil.toGrayscale(this.originalBitmap);
+        this.temp = BitmapUtil.toGrayscale(this.originalBitmap);
         int w = temp.getWidth();
         int h = temp.getHeight();
 
-        int[] mmap = new int[w * h];
-        double[] tmap = new double[w * h];
-        int[] cmap = new int[w * h];
+        mmap = new int[w * h];
+        tmap = new double[w * h];
 
         temp.getPixels(mmap, 0, temp.getWidth(), 0, 0, temp.getWidth(),
                 temp.getHeight());
 
-        double max = Double.MIN_VALUE;
+        max = 0;
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
                 double gx = GX(i, j, temp);
@@ -45,12 +48,35 @@ public class Sobel extends Detection {
             }
         }
 
+    }
+
+    /**
+     *
+     * 根据设定的阙值获取处理后的图片
+     *
+     * @param a
+     * @param b
+     * @param c
+     * @return
+     */
+    public Bitmap getBitmap(double a, double b, double c){
+
+        if(a == 0 && b == 0 && c == 0){
+            return temp;
+        }
+
+        int w = temp.getWidth();
+        int h = temp.getHeight();
+        int[] cmap = new int[w * h];
+
         for (int i = 0; i < w; i++) {
             for (int j = 0; j < h; j++) {
-                if (tmap[j * w + i] > max * 0.1) {
+                if (tmap[j * w + i] > max * a) {
                     cmap[j * w + i] = mmap[j * w + i];
-                } else if (tmap[j * w + i] > max * 0.05) {
+                } else if (tmap[j * w + i] > max * b) {
                     cmap[j * w + i] = mmap[j * w + i] - Color.GRAY;
+                } else if (tmap[j * w + i] > max * c) {
+                    cmap[j * w + i] = mmap[j * w + i] - Color.GRAY * 3 / 2;
                 } else {
                     cmap[j * w + i] = Color.WHITE;
                 }

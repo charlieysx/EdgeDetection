@@ -13,5 +13,5 @@ public abstract class Detection {
      * @param originalBitmap 原始图片
      * @return
      */
-    public abstract Bitmap detection(Bitmap originalBitmap);
+    public abstract void detection(Bitmap originalBitmap);
 }
