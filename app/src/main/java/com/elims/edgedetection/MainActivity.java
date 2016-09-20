@@ -63,7 +63,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_next.setOnClickListener(this);
         bt_change.setOnClickListener(this);
 
-        detection = new SobelByRs(this, this);
+        detection = new Sobel(this);
 
         imgMaxWidth = CommonUtil.screenWidth;
         thisImg = 0;
@@ -152,7 +152,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
             @Override
             public void run() {
                 if(isd) {
-                    ((SobelByRs) detection).getBitmap(a, b, c);
+                    ((Sobel) detection).getBitmap(a, b, c);
 //                    Log.d("main", a + "--" + b + "--" + c);
                 } else {
                     detection.detection(bitmap);

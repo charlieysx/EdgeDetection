@@ -2,12 +2,10 @@ package com.elims.edgedetection.detection;
 
 import android.content.Context;
 import android.graphics.Bitmap;
-import android.graphics.Color;
 import android.support.v8.renderscript.Allocation;
 import android.support.v8.renderscript.RenderScript;
 
 import com.elims.edgedetection.IMain;
-import com.elims.edgedetection.ScriptC_hello;
 import com.elims.edgedetection.utils.BitmapUtil;
 
 /**
