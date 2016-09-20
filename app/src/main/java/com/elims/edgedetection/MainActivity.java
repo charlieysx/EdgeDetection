@@ -15,6 +15,7 @@ import android.widget.Toast;
 
 import com.elims.edgedetection.detection.Detection;
 import com.elims.edgedetection.detection.Sobel;
+import com.elims.edgedetection.detection.SobelByRs;
 import com.elims.edgedetection.utils.BitmapUtil;
 import com.elims.edgedetection.utils.CommonUtil;
 
@@ -62,11 +63,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         bt_next.setOnClickListener(this);
         bt_change.setOnClickListener(this);
 
-        detection = new Sobel(this);
+        detection = new SobelByRs(this, this);
 
         imgMaxWidth = CommonUtil.screenWidth;
         thisImg = 0;
 
+        bitmap = BitmapUtil.getThumbnailBitmap(MainActivity.this, imgIds[thisImg], imgMaxWidth);
         dealing = false;
         isd = false;
         deal(0, 0, 0);
@@ -120,6 +122,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 }
                 break;
             case R.id.bt_change:
+
                 if(dealing) {
                     Toast.makeText(this, "图象处理中...", Toast.LENGTH_SHORT).show();
                 } else {
@@ -148,12 +151,11 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         new Thread(){
             @Override
             public void run() {
-                bitmap = BitmapUtil.getThumbnailBitmap(MainActivity.this, imgIds[thisImg], imgMaxWidth);
                 if(isd) {
-                    detection.detection(bitmap);
-                    ((Sobel) detection).getBitmap(a, b, c);
+                    ((SobelByRs) detection).getBitmap(a, b, c);
 //                    Log.d("main", a + "--" + b + "--" + c);
                 } else {
+                    detection.detection(bitmap);
                     setBitmap(bitmap);
                 }
             }
