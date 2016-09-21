@@ -58,12 +58,15 @@ RenderScript的使用方法可参考我的代码，或参考我后面附的参�
 4. [RenderScript :简单而快速的图像处理][4]
 5. [Sobel边缘检测算法][5]
 
+###我的博客地址
+[Android使用Sobel算法边缘检测][6]
+
 
 [1]: http://blog.csdn.net/huachao1001/article/details/51518322
 [2]: http://blog.csdn.net/huachao1001/article/details/51524502
 [3]: http://www.cnblogs.com/willhua/p/5782293.html
 [4]: http://jcodecraeer.com/a/anzhuokaifa/androidkaifa/2016/0504/4205.html
 [5]: http://www.cnblogs.com/lancidie/archive/2011/07/17/2108885.html
-
+[6]: http://blog.csdn.net/a249900679/article/details/52599678
 
 ```
