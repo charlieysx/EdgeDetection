@@ -5,7 +5,7 @@ EdgeDetection
 
 ---
 
-###使用RenderScript前的配置
+### 使用RenderScript前的配置
 1.android studio中的配置:
 在build.gradle中添加：
 
@@ -34,7 +34,7 @@ RenderScript的使用方法可参考我的代码，或参考我后面附的参�
 
 ---
 
-###效果图
+### 效果图
 从左往右分别是原图、灰度图、进行边缘检测后的图
 
 ![a1](/img/a1.jpg "a1")
@@ -51,14 +51,14 @@ RenderScript的使用方法可参考我的代码，或参考我后面附的参�
 
 ---
 
-###参考资料
+### 参考资料
 1. [Android自动手绘，圆你儿时画家梦!][1]
 2. [RenderScript 让你的Android计算速度快的飞上天!][2]
 3. [Android高效计算——RenderScript][3]
 4. [RenderScript :简单而快速的图像处理][4]
 5. [Sobel边缘检测算法][5]
 
-###我的博客地址
+### 我的博客地址
 [Android使用Sobel算法边缘检测][6]
 
 
